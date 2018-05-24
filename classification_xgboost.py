@@ -1,11 +1,16 @@
 import numpy as np
 import xgboost as xgb
+from pandas import DataFrame
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
-labels = np.load("labels.npy")
-markers = np.load("marker.npy")
-print labels.shape, markers.shape
+labels = np.load("./train/labels.npy")
+markers = np.load("./train/marker.npy")
+# df = DataFrame(labels)
+# print np.cov(labels)
+# sns.heatmap(labels, center=0)
+# plt.show()
 
 xTrain = labels[:3000]
 yTrain = markers[:3000]
