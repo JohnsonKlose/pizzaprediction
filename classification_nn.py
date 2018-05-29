@@ -21,11 +21,11 @@ class LossAccuracyHistory(keras.callbacks.Callback):
         self.val_acc.append(logs.get('val_acc'))
 
 
-X = np.load("labels.npy")
+X = np.load("train/labels.npy")
 X_train = X[:3000]
 X_validation = X[3000:]
 
-y = np.load("marker.npy")
+y = np.load("train/marker.npy")
 y_train = y[:3000]
 y_validation = y[3000:]
 
@@ -43,14 +43,14 @@ model.add(Dense(8, activation='sigmoid'))
 # model.add(Dense(3, activation='sigmoid', kernel_regularizer=regularizers.l1(0.01)))
 model.add(Dense(1, activation='sigmoid'))
 
-RMSprop = keras.optimizers.RMSprop(lr=0.01)
-# sgd = keras.optimizers.SGD(lr=0.001)
+# RMSprop = keras.optimizers.RMSprop(lr=0.01)
+sgd = keras.optimizers.SGD(lr=0.001)
 model.compile(loss='mse',
-              optimizer=RMSprop,
+              optimizer=sgd,
               metrics=['accuracy'])
 
 history = LossAccuracyHistory()
-epoch_num = 500
+epoch_num = 200
 model.fit(x=X_train, y=y_train, validation_split=0.2, batch_size=32, epochs=epoch_num, callbacks=[history])
 train_score = model.evaluate(X_train, y_train, batch_size=32)
 validation_score = model.evaluate(X_validation, y_validation, batch_size=32)
