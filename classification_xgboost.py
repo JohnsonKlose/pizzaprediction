@@ -54,7 +54,8 @@ conf = confusion_matrix(marker_test, marker_predict)
 precision_test = float(conf[0][0]) / float(conf[1][0] + conf[0][0])
 recall_test = float(conf[0][0]) / float(conf[0][1]+conf[0][0])
 print precision_test, recall_test
-print bst.get_fscore()
+f_score = bst.get_fscore()
+print sorted(f_score.iteritems(), key=lambda d: d[1], reverse=True)
 
 x = range(1, num_round+1)
 y_error = evaluation_result['train']['error']
