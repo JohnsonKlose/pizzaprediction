@@ -24,7 +24,7 @@ def is_pizza(str):
     return False
 
 
-filename = 'shijigongyuan_sh.csv'
+filename = 'xinjiekou.csv'
 f = open(filename, 'w')
 f.write(codecs.BOM_UTF8)
 writer = csv.writer(f)
@@ -33,9 +33,9 @@ writer.writerow(['shop_id', 'shop_address', 'shop_name', 'delivery_fee', 'latitu
                  'shop_service_score', 'shop_star_level', 'menu_name', 'item_id', 'item_description', 'item_month_sales',
                  'item_name', 'item_rating', 'item_rating_count', 'item_satisfy_count', 'item_satisfy_rate'])
 
-# search_geohash = 'wtsw9yrc72y'  # 南京
-search_geohash = 'wtw3sjq6n6um'
-search_keyword = '世纪公园'
+search_geohash = 'wtsw9yrc72y'  # 南京
+# search_geohash = 'wtw3sjq6n6um'
+search_keyword = '新街口'
 search_url = 'https://www.ele.me/restapi/v2/pois?extras%5B%5D=count&geohash=' + search_geohash \
              + '&keyword=' + search_keyword + '&limit=20&type=nearby'
 
