@@ -19,7 +19,6 @@ words = []
 
 
 def cut(name, des):
-    to_cut = ''
     if des == ' ' or des is np.nan:
         to_cut = name
     else:
@@ -39,15 +38,15 @@ def jieba_cut(word):
 
 data_all['cut'] = data_all.apply(lambda row: cut(row['item_name'], row['item_description']), axis=1)
 print data_all
-labels_np, marker_np = make_labels(data_all['cut'], data_all['shop_food_score'], data_all['item_rating'])
-print labels_np.shape, marker_np.shape
-np.save("./train/labels.npy", labels_np)
-np.save("./train/marker.npy", marker_np)
+# labels_np, marker_np = make_labels(data_all['cut'], data_all['shop_food_score'], data_all['item_rating'])
+# print labels_np.shape, marker_np.shape
+# np.save("./train/labels.npy", labels_np)
+# np.save("./train/marker.npy", marker_np)
 
-# value = dict(Counter(words))
-# value_sorted = sorted(value.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
-#
-# draw_word_cloud(value)
+value = dict(Counter(words))
+value_sorted = sorted(value.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
+print value_sorted
+draw_word_cloud(value)
 
 
 # for i in range(0, len(value_sorted)):

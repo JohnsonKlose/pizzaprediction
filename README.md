@@ -56,21 +56,65 @@ def is_pizza(str):
 找到披萨分类后遍历所有披萨商品，爬取披萨商品的信息包括商品描述、月销量、名称、评星、评星数等，最终结果保存在csv文件中。  
 ```
 pizza_ = requests.get(pizza_url)
-	time.sleep(2 + numpy.random.randint(0, 3))
-    pizza_json = json.loads(pizza_.text)
-    for menu_json in pizza_json:
-        if is_pizza(menu_json['name']):
-        	# 目录信息
-            menu_name = menu_json['name']
-            food_json = menu_json['foods']
-            for foods in food_json:
-            # 单品信息
-            foods_id = foods['item_id']
-            foods_description = foods['description']
-            foods_month_sales = foods['month_sales']
-            foods_name = foods['name']
-            foods_rating = foods['rating']
-            foods_rating_count = foods['rating_count']
-            foods_satisfy_count = foods['satisfy_count']
-            foods_satisfy_rate = foods['satisfy_rate']
+time.sleep(2 + numpy.random.randint(0, 3))
+pizza_json = json.loads(pizza_.text)
+for menu_json in pizza_json:
+	if is_pizza(menu_json['name']):
+        # 目录信息
+        menu_name = menu_json['name']
+        food_json = menu_json['foods']
+        for foods in food_json:
+        # 单品信息
+        foods_id = foods['item_id']
+        foods_description = foods['description']
+        foods_month_sales = foods['month_sales']
+        foods_name = foods['name']
+        foods_rating = foods['rating']
+        foods_rating_count = foods['rating_count']
+        foods_satisfy_count = foods['satisfy_count']
+        foods_satisfy_rate = foods['satisfy_rate']
 ```  
+
+## 数据处理
+- 数据清洗  
+因为不同的地理位置覆盖的范围可能重叠，因此我们爬到的店铺可能存在重复，所以我们需要将重复的数据去除，可以根据item_id去除重复数据  
+```
+data = data.drop_duplicates(['item_id'])
+```  
+同时，评星为0的数据对我们来说意义也不大，这些大多是销量很低还没有人评星的商品，可以视为离群数据将其取出  
+```
+data = data[data['item_rating'] > 0]
+```  
+- 自然语言处理  
+为了提取商品原料的信息内容，将爬取到的商品描述信息进行分词处理，使用的是jieba库  
+```
+def jieba_cut(word):
+    s = jieba.cut(word)
+    s = [word.encode('utf-8') for word in list(s)]
+    stoplist = {}.fromkeys([line.strip() for line in open("./stopwords.txt")])
+    segs = [word for word in list(s) if word not in stoplist]
+    return segs
+```  
+将分词的结果进行词频统计，使用pyecharts库将词频统计结果通过词云图可视化  
+```
+def draw_word_cloud(word_data):
+    from pyecharts import WordCloud
+    word = []
+    value = []
+    for (k, v) in word_data.items():
+        if v < 50:
+            del word_data[k]
+        else:
+            word.append(k)
+            value.append(v)
+        wordcloud = WordCloud(width=1300, height=620)
+        wordcloud.add("", word, value, word_size_range=[5, 1000], shape='diamond')
+        wordcloud.render("./wordcloud.html")
+```  
+![wordcloud](http://oswrmk9hd.bkt.clouddn.com/wordcloud.png)
+可以看到，词频较高的词有牛肉、鸡肉、培根、奶酪等，这些都是我们希望获得的披萨原料和风味，但是也有一些词，比如纸巾、风味、超级等没有多大意义的词，这里展示一下词频排在前20的有哪些词  
+word | frequency|:-|:-|
+芝士 | 2224
+披萨 | 1292
+寸 | 1018
+

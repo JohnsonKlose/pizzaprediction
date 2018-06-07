@@ -8,6 +8,6 @@ def draw_word_cloud(word_data):
         else:
             word.append(k)
             value.append(v)
-        wordcloud = WordCloud(width=1300, height=620)
-        wordcloud.add("", word, value, word_size_range=[5, 1000], shape='diamond')
-        wordcloud.render("./wordcloud.html")
+    wordcloud = WordCloud(width=1300, height=620)
+    wordcloud.add("", word, value, shape='diamond')
+    wordcloud.render("./wordcloud.html")
