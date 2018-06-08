@@ -26,11 +26,11 @@ class LossAccuracyHistory(keras.callbacks.Callback):
 
 X = np.load("train/labels.npy")
 X_train = X[:3000]
-X_validation = X[3000:]
+X_test = X[3000:]
 
 y = np.load("train/marker.npy")
 y_train = y[:3000]
-y_validation = y[3000:]
+y_test = y[3000:]
 
 model = Sequential()
 model.add(Dense(64, activation='sigmoid', input_dim=X.shape[1]))
@@ -45,10 +45,10 @@ model.compile(loss='mse',
               metrics=['accuracy'])
 
 history = LossAccuracyHistory()
-epoch_num = 200
+epoch_num = 100
 model.fit(x=X_train, y=y_train, validation_split=0.2, batch_size=32, epochs=epoch_num, callbacks=[history])
 train_score = model.evaluate(X_train, y_train, batch_size=32)
-validation_score = model.evaluate(X_validation, y_validation, batch_size=32)
+validation_score = model.evaluate(X_test, y_test, batch_size=32)
 print train_score, validation_score
 
 x = range(1, epoch_num+1)
