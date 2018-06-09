@@ -996,7 +996,7 @@
   交叉验证比例 | 0.2
   
   将模型训练中的loss和accuracy绘制成plot展示，可以看到最后训练集和验证集的accuracy都达到了80%以上，且最终趋于稳定，没有产生过拟合现象  
-  ![nn_plot](http://oswrmk9hd.bkt.clouddn.com/nn_plot)
+  ![nn_plot](http://oswrmk9hd.bkt.clouddn.com/nn_plot)  
   最后使用测试集测试模型的泛化能力，发现准确率可以达到0.811，与训练样本的准确率0.815相近，证明整个模型的能力还是不错的
 - XGBoost
   本项目还实用XGBoost实现了预测模型，具体参数如下
@@ -1009,6 +1009,8 @@
   epoch | 100
   objective | binary:logistic
   eval_metric | ['error', 'auc']
+  迭代次数 | 500
+  交叉验证比例 | 0.2
   
   由于XGBoost的评价函数中没有precision，本项目结合sklearn自定义了评价函数，应用于每个round中  
   ```
@@ -1021,7 +1023,7 @@
     return 'precision', precision
   ```  
   模型的训练过程可视化的结果如下图  
-  ![xgboost](http://oswrmk9hd.bkt.clouddn.com/xgboost_plot)
+  ![xgboost](http://oswrmk9hd.bkt.clouddn.com/xgboost_plot)  
   可以看到训练集验证集的精度最终都可以达到0.8以上，但验证集error下降的不是很明显，但这个是效果较好的一组参数了，后期还需要对模型参数多摸索！  
   最后用测试集数据对模型进行验证，测试集精度达到0.826，可以看出整个模型的效果还是不错的  
   XGBoost通过训练最后可以得到一个特征的重要性评分，我们最后看到重要性排名前20的特征是
