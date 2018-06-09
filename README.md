@@ -43,15 +43,15 @@
   查看某个店铺的页面，可以看到页面中对所有商品做了一个分类，分类内容会有沙拉、披萨、饮料等等，因此我们可以先判断该分类是否为披萨品类，然后再爬取改分类下的披萨商品，判断披萨品类方法如下。  
   ```
   def is_pizza(str):
-    if '披萨' in str:
-        return True
-    if '比萨' in str:
-        return True
-    if 'Pizza' in str:
-        return True
-    if 'pizza' in str:
-        return True
-    return False
+      if '披萨' in str:
+          return True
+      if '比萨' in str:
+          return True
+      if 'Pizza' in str:
+          return True
+      if 'pizza' in str:
+          return True
+      return False
   ```  
   找到披萨分类后遍历所有披萨商品，爬取披萨商品的信息包括商品描述、月销量、名称、评星、评星数等，最终结果保存在csv文件中。  
   ```
@@ -59,20 +59,20 @@
   time.sleep(2 + numpy.random.randint(0, 3))
   pizza_json = json.loads(pizza_.text)
   for menu_json in pizza_json:
-	if is_pizza(menu_json['name']):
-        # 目录信息
-        menu_name = menu_json['name']
-        food_json = menu_json['foods']
-        for foods in food_json:
-        # 单品信息
-        foods_id = foods['item_id']
-        foods_description = foods['description']
-        foods_month_sales = foods['month_sales']
-        foods_name = foods['name']
-        foods_rating = foods['rating']
-        foods_rating_count = foods['rating_count']
-        foods_satisfy_count = foods['satisfy_count']
-        foods_satisfy_rate = foods['satisfy_rate']
+	  if is_pizza(menu_json['name']):
+          # 目录信息
+          menu_name = menu_json['name']
+          food_json = menu_json['foods']
+          for foods in food_json:
+          # 单品信息
+          foods_id = foods['item_id']
+          foods_description = foods['description']
+          foods_month_sales = foods['month_sales']
+          foods_name = foods['name']
+          foods_rating = foods['rating']
+          foods_rating_count = foods['rating_count']
+          foods_satisfy_count = foods['satisfy_count']
+          foods_satisfy_rate = foods['satisfy_rate']
   ```  
 
 ## 数据处理
@@ -89,27 +89,27 @@
   为了提取商品原料的信息内容，将爬取到的商品描述信息进行分词处理，使用的是jieba库  
   ```
   def jieba_cut(word):
-    s = jieba.cut(word)
-    s = [word.encode('utf-8') for word in list(s)]
-    stoplist = {}.fromkeys([line.strip() for line in open("./stopwords.txt")])
-    segs = [word for word in list(s) if word not in stoplist]
-    return segs
+      s = jieba.cut(word)
+      s = [word.encode('utf-8') for word in list(s)]
+      stoplist = {}.fromkeys([line.strip() for line in open("./stopwords.txt")])
+      segs = [word for word in list(s) if word not in stoplist]
+      return segs
   ```  
   将分词的结果进行词频统计，使用pyecharts库将词频统计结果通过词云图可视化  
   ```
   def draw_word_cloud(word_data):
-    from pyecharts import WordCloud
-    word = []
-    value = []
-    for (k, v) in word_data.items():
-        if v < 50:
-            del word_data[k]
-        else:
-            word.append(k)
-            value.append(v)
-        wordcloud = WordCloud(width=1300, height=620)
-        wordcloud.add("", word, value, word_size_range=[5, 1000], shape='diamond')
-        wordcloud.render("./wordcloud.html")
+      from pyecharts import WordCloud
+      word = []
+      value = []
+      for (k, v) in word_data.items():
+          if v < 50:
+              del word_data[k]
+          else:
+              word.append(k)
+              value.append(v)
+          wordcloud = WordCloud(width=1300, height=620)
+          wordcloud.add("", word, value, word_size_range=[5, 1000], shape='diamond')
+          wordcloud.render("./wordcloud.html")
   ```  
   ![wordcloud](http://oswrmk9hd.bkt.clouddn.com/wordcloud12.png)
   可以看到，词频较高的词有牛肉、鸡肉、培根、奶酪等，这些都是我们希望获得的披萨原料和风味，但是也有一些词，比如纸巾、风味、超级等没有多大意义的词，这里展示一下词频排在前30的有哪些词  
@@ -1015,12 +1015,12 @@
   由于XGBoost的评价函数中没有precision，本项目结合sklearn自定义了评价函数，应用于每个round中  
   ```
   def precision_and_recall(preds, dtrain):
-    lab = dtrain.get_label()
-    preds = [int(i >= 0.5) for i in preds]
-    conf = confusion_matrix(lab, preds)
-    precision = float(conf[0][0]) / float(conf[1][0]+conf[0][0])
-    recall = float(conf[0][0]) / float(conf[0][1]+conf[0][0])
-    return 'precision', precision
+      lab = dtrain.get_label()
+      preds = [int(i >= 0.5) for i in preds]
+      conf = confusion_matrix(lab, preds)
+  	  precision = float(conf[0][0]) / float(conf[1][0]+conf[0][0])
+      recall = float(conf[0][0]) / float(conf[0][1]+conf[0][0])
+      return 'precision', precision
   ```  
   模型的训练过程可视化的结果如下图  
   ![xgboost](http://oswrmk9hd.bkt.clouddn.com/xgboost_plot)  
