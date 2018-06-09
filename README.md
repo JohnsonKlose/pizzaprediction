@@ -13,30 +13,30 @@
 构造了请求地址后就可以爬取店铺信息了，需要注意的是，本项目只需要爬取披萨门店就可以了，因此可以在获取店铺信息前判断该门店是否是披萨门店，即判断店铺id中是否含有211，如果没有211就直接跳过爬取下一个店铺。  
   ```
   for i in range(0, 10):  
-  	# search_result为爬取地址信息的具体内容
-    shop_url = 'https://www.ele.me/restapi/shopping/restaurants?geohash=' + str(search_result['geohash']) + '&latitude=' + str(search_result['latitude']) + '&limit=24&longitude=' + str(search_result['longitude']) + '&offset=' + str(i*24) + '&restaurant_category_ids%5B%5D=3&terminal=web'  
-    shop_ = requests.get(shop_url, headers=head, cookies=cookie)  
-    time.sleep(2 + numpy.random.randint(0, 3))  
-    shop_json = json.loads(shop_.text)  
-    if len(shop_json) == 0:  
-        break  
-    for shop in shop_json:  
-        # 首先判断是否为披萨店  
-        json_id = []  
-    for flv in shop['flavors']:  
-        json_id.append(flv['id'])  
-    if 211 not in json_id:  
-        continue  
-        # 店铺信息  
-        shop_id = shop['id']  
-        shop_address = shop['address']  
-        shop_name = shop['name']  
-        shop_delivery_fee = shop['float_delivery_fee']  
-        shop_latitude = shop['latitude']  
-        shop_longitude = shop['longitude']  
-        shop_opening_hours = shop['opening_hours']  
-        shop_recent_order_num = shop['recent_order_num']  
-        shop_rating = shop['rating']  
+      # search_result为爬取地址信息的具体内容
+      shop_url = 'https://www.ele.me/restapi/shopping/restaurants?geohash=' + str(search_result['geohash']) + '&latitude=' + str(search_result['latitude']) + '&limit=24&longitude=' + str(search_result['longitude']) + '&offset=' + str(i*24) + '&restaurant_category_ids%5B%5D=3&terminal=web'  
+      shop_ = requests.get(shop_url, headers=head, cookies=cookie)  
+      time.sleep(2 + numpy.random.randint(0, 3))  
+      shop_json = json.loads(shop_.text)  
+      if len(shop_json) == 0:  
+          break  
+      for shop in shop_json:  
+          # 首先判断是否为披萨店  
+          json_id = []  
+      for flv in shop['flavors']:  
+          json_id.append(flv['id'])  
+      if 211 not in json_id:  
+          continue  
+          # 店铺信息  
+          shop_id = shop['id']  
+          shop_address = shop['address']  
+          shop_name = shop['name']  
+          shop_delivery_fee = shop['float_delivery_fee']  
+          shop_latitude = shop['latitude']  
+          shop_longitude = shop['longitude']  
+          shop_opening_hours = shop['opening_hours']  
+          shop_recent_order_num = shop['recent_order_num']  
+          shop_rating = shop['rating']  
   ```  
 - 分析店铺页面爬取披萨品类信息  
   ![itemcategory](http://oswrmk9hd.bkt.clouddn.com/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202018-06-05%20%E4%B8%8B%E5%8D%8810.42.52.png)
@@ -966,8 +966,8 @@
   </table>
 
 - 特征与标签提取  
-根据上述表格的分类，可以得到130个子类，这些就是我们需要提取的特征了。参考词袋模型表达文本信息，我们也给每个披萨商品构建一个1*130的向量，每个特征占据一个维度，如果该商品包含该特征，则该维度的值为1，否则该维度值为0，这样得到了每个披萨商品的特征向量  
-```
+  根据上述表格的分类，可以得到130个子类，这些就是我们需要提取的特征了。参考词袋模型表达文本信息，我们也给每个披萨商品构建一个1*130的向量，每个特征占据一个维度，如果该商品包含该特征，则该维度的值为1，否则该维度值为0，这样得到了每个披萨商品的特征向量  
+  ```
 def word_to_label(cut_words):
     label = np.zeros((1, 130), dtype=np.int16)
     words = cut_words.split(",")
@@ -1363,15 +1363,15 @@ def word_to_label(cut_words):
         # 黄油, f129
         label[0][129] = 1
     return label
-```  
-我们想要预测披萨商品畅销与否，有了特征之后还需要提取披萨商品的标签。观察数据发现，我们可以通过判断商品评星是否大于店铺口味评星来判断，如果某件商品评星高于店铺口味评星，则说明该商品畅销，标记为1，否则标记为0  
-```
+  ```  
+  我们想要预测披萨商品畅销与否，有了特征之后还需要提取披萨商品的标签。观察数据发现，我们可以通过判断商品评星是否大于店铺口味评星来判断，如果某件商品评星高于店铺口味评星，则说明该商品畅销，标记为1，否则标记为0  
+  ```
 def rate_to_marker(food_score, item_rating):
     if item_rating >= food_score:
         return np.array([[1]])
     else:
         return np.array([[0]])
-```  
+  ```  
 - 神经网络模型  
   本项目实现的神经网络共有4层，第一层共有64个神经元，且包含0.8的droupout，第二层共有16个神经元，第三层共有8层神经元，最后一层是输出层，所有层的激活函数都是sigmoid函数，本项目使用kears库实现模型  
   ```
